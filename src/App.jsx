@@ -1,50 +1,23 @@
-import { useState, useEffect } from 'react';
 import './App.css';
+import useWordGame from './hooks/useWordGame';
 
 export default function App() {
-  const STARTING_TIME = 5
-
-  const [text, setText] = useState('');
-  const [countdown, setCountdown] = useState(STARTING_TIME);
-  const [isTimeRunning, setIsTimeRunning] = useState(false);
-  const [wordCount, setWordCount] = useState(0);
-
-  function handleChange(e) {
-    setText(e.target.value);
-  }
-
-  function calcWordCount(words) {
-    const wordsArr = words.split(' ').filter((word) => word !== '');
-    return wordsArr.length;
-  }
-
-  useEffect(() => {
-    if (isTimeRunning && countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (countdown === 0) {
-      endGame();
-    }
-  }, [countdown, isTimeRunning]);
-
-  function startGame() {
-    setIsTimeRunning(true);
-    setCountdown(STARTING_TIME);
-    setText('');
-  }
-
-  function endGame() {
-    setIsTimeRunning(false);
-    setWordCount(calcWordCount(text));
-  }
+  const {
+    wordCount,
+    text,
+    countdown,
+    isTimeRunning,
+    textBoxRef,
+    handleChange,
+    startGame,
+  } = useWordGame(10);
 
   return (
     <div>
       <h1>How fast do you type?</h1>
 
       <textarea
+        ref={textBoxRef}
         disabled={!isTimeRunning}
         value={text}
         onChange={handleChange}
